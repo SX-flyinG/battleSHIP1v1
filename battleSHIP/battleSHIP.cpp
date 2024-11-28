@@ -9,6 +9,7 @@ void PlaceDestroyers(int& letterKey, int& numKey, int destroyer, char polePlayer
 void PlaceCruiser(int letterKey, int numKey, int wayKey, int cruiser, char pole[11][11]);
 void PlaceSubmarine(int letterKey, int numKey, int wayKey, int submarine, char pole[11][11]);
 void PlaceBattleShip(int letterKey, int numKey, int wayKey, int submarine, char pole[11][11]);
+void MarkSurroundings(int letterKey, int numKey, char pole[11][11]);
 void WriteRow(int& letterKey);
 void WriteColumn(int& numKey);
 void PlayerMove(char field[11][11], char field2[11][11], char viewField[11][11], int& countOfMoves, int& switchSides, int& countOfShips, int letterKey, int numKey);
@@ -18,13 +19,13 @@ void fillArray(char polePlayer[11][11]) {
 
     for (int i = 0; i < 11; i++) {
         for (int j = 0; j < 11; j++) {
-            polePlayer[i][j] = '.';  
+            polePlayer[i][j] = '.';
 
             if (i == 0 && j != 0) {
-                polePlayer[i][j] = char(47 + j); 
+                polePlayer[i][j] = char(47 + j);
             }
             if (j == 0 && i != 0) {
-                polePlayer[i][j] = char(65 + i - 1);  
+                polePlayer[i][j] = char(65 + i - 1);
             }
             if (i == 0 && j == 0) {
                 polePlayer[i][j] = 'X';
@@ -42,6 +43,16 @@ void PrintPole(char pole[11][11]) {
     }
 }
 
+void MarkSurroundings(int letterKey, int numKey, char pole[11][11]) {
+    for (int i = letterKey - 1; i <= letterKey + 1; i++) {
+        for (int j = numKey - 1; j <= numKey + 1; j++) {
+            if (i >= 1 && i <= 10 && j >= 1 && j <= 10 && pole[i][j] == '.') {
+                pole[i][j] = 'x';
+            }
+        }
+    }
+}
+
 void PlaceDestroyers(int& letterKey, int& numKey, int destroyer, char pole[11][11]) {
     cout << "Firstly place ur destroyer's ships : " << endl;
     for (destroyer; destroyer > 0; destroyer--) {
@@ -55,15 +66,15 @@ void PlaceDestroyers(int& letterKey, int& numKey, int destroyer, char pole[11][1
         }
 
         pole[letterKey][numKey] = 'D';
-
+        MarkSurroundings(letterKey, numKey, pole);
         PrintPole(pole);
     }
 }
 
 void PlaceCruiser(int letterKey, int numKey, int wayKey, int cruiser, char pole[11][11]) {
     cout << "\nSecondly place your cruiser's ships: \n" << endl;
-
-    for (int c = 0; c < cruiser; c++) {
+    
+    for (int c = 0;  c < cruiser; c++) {
         WriteRow(letterKey);
         WriteColumn(numKey);
 
@@ -75,63 +86,81 @@ void PlaceCruiser(int letterKey, int numKey, int wayKey, int cruiser, char pole[
 
         bool validPlacement = false;
         while (!validPlacement) {
-            cout << "\nWrite direction (W, w - up; A, a - left; S, s - down; D, d - right): \n";
+            cout << "\nWrite direction (W, w - up; A, a - left; S, s - down; D, d - right OR E , e - for replace): \n";
             wayKey = _getch();
-            wayKey = toupper(wayKey); 
-
+            wayKey = toupper(wayKey);
             switch (wayKey) {
-            case 'A':  
-                if (numKey - 1 >= 1 && pole[letterKey][numKey] == '.' 
-                    && pole[letterKey][numKey - 1] == '.' ) {
+            case 'A':
+                if (numKey - 1 >= 1 && pole[letterKey][numKey] == '.' && pole[letterKey][numKey - 1] == '.') {
                     pole[letterKey][numKey] = 'C';
                     pole[letterKey][numKey - 1] = 'C';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey, numKey - 1, pole);
                     validPlacement = true;
                 }
                 else {
                     cout << "Invalid placement! Try again.\n";
                 }
                 break;
-            case 'S':  
-                if (letterKey + 1 <= 10 && pole[letterKey][numKey] == '.' 
-                    && pole[letterKey + 1][numKey] == '.') {
+            case 'S':
+                if (letterKey + 1 <= 10 && pole[letterKey][numKey] == '.' && pole[letterKey + 1][numKey] == '.') {
                     pole[letterKey][numKey] = 'C';
                     pole[letterKey + 1][numKey] = 'C';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey + 1, numKey, pole);
                     validPlacement = true;
                 }
                 else {
                     cout << "Invalid placement! Try again.\n";
                 }
                 break;
-            case 'D': 
-                if (numKey + 1 <= 10 && pole[letterKey][numKey] == '.' 
-                    && pole[letterKey][numKey + 1] == '.' ) {
+            case 'D':
+                if (numKey + 1 <= 10 && pole[letterKey][numKey] == '.' && pole[letterKey][numKey + 1] == '.') {
                     pole[letterKey][numKey] = 'C';
                     pole[letterKey][numKey + 1] = 'C';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey, numKey + 1, pole);
                     validPlacement = true;
                 }
                 else {
                     cout << "Invalid placement! Try again.\n";
                 }
                 break;
-            case 'W': 
-                if (letterKey - 1 >= 1 && pole[letterKey][numKey] == '.' 
-                    && pole[letterKey - 1][numKey] == '.' ) {
+            case 'W':
+                if (letterKey - 1 >= 1 && pole[letterKey][numKey] == '.' && pole[letterKey - 1][numKey] == '.') {
                     pole[letterKey][numKey] = 'C';
                     pole[letterKey - 1][numKey] = 'C';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey - 1, numKey, pole);
                     validPlacement = true;
                 }
                 else {
                     cout << "Invalid placement! Try again.\n";
                 }
                 break;
+            case 'E':
+                cout << "You chose to replace the cruiser. Choose a new position and direction.\n";
+                if (c == 0) {
+                    PlaceCruiser(letterKey, numKey, wayKey, cruiser, pole);
+                 }
+                else if (c == 1) {
+                    PlaceCruiser(letterKey, numKey, wayKey, cruiser - 2, pole);
+                }
+                else {
+                    PlaceCruiser(letterKey, numKey, wayKey, cruiser - 3, pole);
+                }
+                
             default:
-                cout << "Invalid direction. Please use W, A, S, or D.\n";
+                cout << "Invalid direction. Please use W, A, S, or D. Or E for replace the position.\n";
+                break;
             }
         }
-
+        
         PrintPole(pole);
+        
     }
 }
+
 
 void PlaceSubmarine(int letterKey, int numKey, int wayKey, int submarine, char pole[11][11]) {
     cout << "\nSecondly place your submarine's ships: \n" << endl;
@@ -160,6 +189,9 @@ void PlaceSubmarine(int letterKey, int numKey, int wayKey, int submarine, char p
                     pole[letterKey][numKey] = 'S';
                     pole[letterKey][numKey - 1] = 'S';
                     pole[letterKey][numKey - 2] = 'S';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey, numKey - 1, pole);
+                    MarkSurroundings(letterKey, numKey - 2, pole);
                     validPlacement = true;
                 }
                 else {
@@ -173,6 +205,9 @@ void PlaceSubmarine(int letterKey, int numKey, int wayKey, int submarine, char p
                     pole[letterKey][numKey] = 'S';
                     pole[letterKey + 1][numKey] = 'S';
                     pole[letterKey + 2][numKey] = 'S';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey + 1, numKey, pole);
+                    MarkSurroundings(letterKey + 2, numKey, pole);
                     validPlacement = true;
                 }
                 else {
@@ -186,6 +221,9 @@ void PlaceSubmarine(int letterKey, int numKey, int wayKey, int submarine, char p
                     pole[letterKey][numKey] = 'S';
                     pole[letterKey][numKey + 1] = 'S';
                     pole[letterKey][numKey + 2] = 'S';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey, numKey + 1, pole);
+                    MarkSurroundings(letterKey, numKey + 2, pole);
                     validPlacement = true;
                 }
                 else {
@@ -199,6 +237,9 @@ void PlaceSubmarine(int letterKey, int numKey, int wayKey, int submarine, char p
                     pole[letterKey][numKey] = 'S';
                     pole[letterKey - 1][numKey] = 'S';
                     pole[letterKey - 2][numKey] = 'S';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey - 1, numKey, pole);
+                    MarkSurroundings(letterKey - 2, numKey, pole);
                     validPlacement = true;
                 }
                 else {
@@ -243,6 +284,10 @@ void PlaceBattleShip(int letterKey, int numKey, int wayKey, int battleShip, char
                     pole[letterKey][numKey - 1] = 'B';
                     pole[letterKey][numKey - 2] = 'B';
                     pole[letterKey][numKey - 3] = 'B';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey, numKey - 1, pole);
+                    MarkSurroundings(letterKey, numKey - 2, pole);
+                    MarkSurroundings(letterKey, numKey - 3, pole);
                     validPlacement = true;
                 }
                 else {
@@ -258,6 +303,10 @@ void PlaceBattleShip(int letterKey, int numKey, int wayKey, int battleShip, char
                     pole[letterKey + 1][numKey] = 'B';
                     pole[letterKey + 2][numKey] = 'B';
                     pole[letterKey + 3][numKey] = 'B';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey + 1, numKey, pole);
+                    MarkSurroundings(letterKey + 2, numKey, pole);
+                    MarkSurroundings(letterKey + 3, numKey, pole);
                     validPlacement = true;
                 }
                 else {
@@ -273,6 +322,10 @@ void PlaceBattleShip(int letterKey, int numKey, int wayKey, int battleShip, char
                     pole[letterKey][numKey + 1] = 'B';
                     pole[letterKey][numKey + 2] = 'B';
                     pole[letterKey][numKey + 3] = 'B';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey, numKey + 1, pole);
+                    MarkSurroundings(letterKey, numKey + 2, pole);
+                    MarkSurroundings(letterKey, numKey + 3, pole);
                     validPlacement = true;
                 }
                 else {
@@ -288,6 +341,10 @@ void PlaceBattleShip(int letterKey, int numKey, int wayKey, int battleShip, char
                     pole[letterKey - 1][numKey] = 'B';
                     pole[letterKey - 2][numKey] = 'B';
                     pole[letterKey - 3][numKey] = 'B';
+                    MarkSurroundings(letterKey, numKey, pole);
+                    MarkSurroundings(letterKey - 1, numKey, pole);
+                    MarkSurroundings(letterKey - 2, numKey, pole);
+                    MarkSurroundings(letterKey - 3, numKey, pole);
                     validPlacement = true;
                 }
                 else {
@@ -295,14 +352,13 @@ void PlaceBattleShip(int letterKey, int numKey, int wayKey, int battleShip, char
                 }
                 break;
             default:
-                cout << "Invalid direction. Please use W, A, S, or D.\n";
+                cout << "Invalid direction. Please use W, A, S, or D .\n";
             }
         }
 
         PrintPole(pole);
     }
 }
-
 
 void WriteRow(int& letterKey) {
     do {
@@ -426,7 +482,7 @@ void PlayerMove(char field[11][11], char rivalField[11][11], char shotsField[11]
     PrintPole(shotsField);
 }
 
-bool GameMode(char mainField[11][11], char rivalField[11][11], char viewRivalField[11][11], char viewMainField[11][11], int& countOfMoves, int& swichSides ,int countOfShipsPL1, int countOfShipsPL2, int letterKey , int numKey) {
+bool GameMode(char mainField[11][11], char rivalField[11][11], char viewRivalField[11][11], char viewMainField[11][11], int& countOfMoves, int& swichSides, int countOfShipsPL1, int countOfShipsPL2, int letterKey, int numKey) {
     if (countOfShipsPL1 == 0) {
         cout << "Player2 wins the game!!!" << endl;
         return false;
@@ -469,18 +525,19 @@ int main() {
     fillArray(polePlayer2);
     fillArray(player1Shots);
     fillArray(player2Shots);
+    cout << "Player num1 please place ur ship's : " << endl;
     PlaceDestroyers(letterKey, numKey, countOfDestroyShip, polePlayer);
     PlaceCruiser(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer);
     PlaceSubmarine(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer);
     PlaceBattleShip(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer);
+    cout << "Player num2 please place ur ship's : " << endl;
     PlaceDestroyers(letterKey, numKey, countOfDestroyShip, polePlayer2);
     PlaceCruiser(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer2);
     PlaceSubmarine(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer2);
     PlaceBattleShip(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer2);
-    while (GameMode(polePlayer , polePlayer2 , player1Shots , player2Shots , countOfMoves , swichSides , countOfAllShips , countOfAllShips ,letterKey , numKey));
+    while (GameMode(polePlayer, polePlayer2, player1Shots, player2Shots, countOfMoves, swichSides, countOfAllShips, countOfAllShips, letterKey, numKey));
     return 0;
 }
-
 
 /* Letters for way
 W - 87;
@@ -491,7 +548,7 @@ S - 83;
 s - 115;
 D - 68;
 d - 100;
-*/ 
+*/
 
 /* Letters for fıll pole
 A - 65;
