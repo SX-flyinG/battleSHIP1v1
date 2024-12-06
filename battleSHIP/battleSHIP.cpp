@@ -14,6 +14,7 @@ void WriteRow(int& letterKey);
 void WriteColumn(int& numKey);
 void PlayerMove(char field[11][11], char field2[11][11], char viewField[11][11], int& countOfMoves, int& switchSides, int& countOfShips, int letterKey, int numKey);
 bool GameMode(char field[11][11], char field2[11][11], char field3[11][11], char field4[11][11], int& countOfMoves, int& swichSides, int countOfShipsPL1, int countOfShipsPL2, int letterKey, int numKey);
+int Play();
 
 void fillArray(char polePlayer[11][11]) {
 
@@ -139,16 +140,8 @@ void PlaceCruiser(int letterKey, int numKey, int wayKey, int cruiser, char pole[
                 }
                 break;
             case 'E':
-                cout << "You chose to replace the cruiser. Choose a new position and direction.\n";
-                if (c == 0) {
-                    PlaceCruiser(letterKey, numKey, wayKey, cruiser, pole);
-                 }
-                else if (c == 1) {
-                    PlaceCruiser(letterKey, numKey, wayKey, cruiser - 2, pole);
-                }
-                else {
-                    PlaceCruiser(letterKey, numKey, wayKey, cruiser - 3, pole);
-                }
+                cout << "Sorry but u dont listen my advise.\n";
+                Play();
                 
             default:
                 cout << "Invalid direction. Please use W, A, S, or D. Or E for replace the position.\n";
@@ -246,6 +239,9 @@ void PlaceSubmarine(int letterKey, int numKey, int wayKey, int submarine, char p
                     cout << "Invalid placement! Try again.\n";
                 }
                 break;
+            case 'E':
+                cout << "Sorry but u dont listen my advise.\n";
+                Play();
             default:
                 cout << "Invalid direction. Please use W, A, S, or D.\n";
             }
@@ -351,6 +347,9 @@ void PlaceBattleShip(int letterKey, int numKey, int wayKey, int battleShip, char
                     cout << "Invalid placement! Try again.\n";
                 }
                 break;
+            case 'E':
+                cout << "Sorry but u dont listen my advise.\n";
+                Play();
             default:
                 cout << "Invalid direction. Please use W, A, S, or D .\n";
             }
@@ -503,9 +502,7 @@ bool GameMode(char mainField[11][11], char rivalField[11][11], char viewRivalFie
     return true;
 }
 
-
-
-int main() {
+int Play() {
     int letterKey = 0;
     int numKey = 0;
     int wayKey = 0;
@@ -527,16 +524,23 @@ int main() {
     fillArray(player2Shots);
     cout << "Player num1 please place ur ship's : " << endl;
     PlaceDestroyers(letterKey, numKey, countOfDestroyShip, polePlayer);
+    cout << "Please dont try to place ships there u cant choose way because u need to replace all ships" << endl;
     PlaceCruiser(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer);
     PlaceSubmarine(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer);
     PlaceBattleShip(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer);
     cout << "Player num2 please place ur ship's : " << endl;
     PlaceDestroyers(letterKey, numKey, countOfDestroyShip, polePlayer2);
+    cout << "Please dont try to place ships there u cant choose way because u need to replace all ships" << endl;
     PlaceCruiser(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer2);
     PlaceSubmarine(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer2);
     PlaceBattleShip(letterKey, numKey, wayKey, countOfCruiseShip, polePlayer2);
     while (GameMode(polePlayer, polePlayer2, player1Shots, player2Shots, countOfMoves, swichSides, countOfAllShips, countOfAllShips, letterKey, numKey));
     return 0;
+}
+
+
+int main() {
+    Play();
 }
 
 /* Letters for way
